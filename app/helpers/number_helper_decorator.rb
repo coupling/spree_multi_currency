@@ -16,6 +16,17 @@ module ActionView
         unit      = options.delete(:unit)
         format    = options.delete(:format)
 
+        unit = case session[:currency_id].to_sym
+        when :EUR
+          '&euro;'
+        when :USD
+          '$'
+        when :GBP
+          '&pound;'
+        else
+          '&euro;'
+        end
+
         if number.to_f < 0
           format = options.delete(:negative_format)
           number = number.respond_to?("abs") ? number.abs : number.sub(/^-/, '')

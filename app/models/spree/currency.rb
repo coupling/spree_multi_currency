@@ -31,6 +31,10 @@ class Spree::Currency < ActiveRecord::Base
 
   class << self
 
+    def current_currency(currency_code)
+      @current = Spree::Currency.find_by_char_code(currency_code)
+    end
+
     # Get the current locale
     def current( current_locale = nil )
       @current = locale(current_locale || I18n.locale).first
@@ -41,12 +45,12 @@ class Spree::Currency < ActiveRecord::Base
     end
 
     def load_rate(options= {})
-      current(options[:locale] || I18n.locale)
+      @current ||= current(options[:locale] || I18n.locale)
       basic
 
       if @rate = @current.currency_converters.get_rate(options[:date] || Time.now)
-        add_rate(@basic.char_code,   @current.char_code, @rate.nominal/@rate.value.to_f)
-        add_rate(@current.char_code, @basic.char_code,   @rate.value.to_f)
+        add_rate(basic.char_code,   @current.char_code, @rate.nominal/@rate.value.to_f)
+        add_rate(@current.char_code, basic.char_code,   @rate.value.to_f)
       end
 
     end
@@ -62,7 +66,7 @@ class Spree::Currency < ActiveRecord::Base
 		# Usage: Spree::Currency.conversion_to_current(100, :locale => "da")
     def conversion_to_current(value, options = { })
       load_rate(options)
-      convert(value, @basic.char_code, @current.char_code)
+      convert(value, @current.char_code, basic.char_code)
     rescue => ex
       Rails.logger.error " [ Currency ] :#{ex.inspect}"
       value
