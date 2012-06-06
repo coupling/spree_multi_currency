@@ -3,8 +3,8 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'spree_multi_currency'
   s.version     = '1.0.0'
-  s.summary     = 'TODO: Add gem summary here'
-  s.description = 'TODO: Add (optional) gem description here'
+  s.summary     = 'Multi currency support for Spree.'
+  s.description = 'Currency support for dollars, euros and pounds - add others in helper. Based on the previous spree-multi-currency'
   s.required_ruby_version = '>= 1.8.7'
 
   s.author            = 'Martijn Lafeber'
