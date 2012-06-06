@@ -35,13 +35,13 @@ class Spree::Currency < ActiveRecord::Base
       @current = Spree::Currency.find_by_char_code(currency_code)
     end
 
-    # Get the current locale
+    # Get the current locale, euro if nothing is set
     def current( current_locale = nil )
-      @current = locale(current_locale || I18n.locale).first
+      @current = Spree::Currency.find_by_char_code(:eur) #locale(current_locale || I18n.locale).first
     end
 
     def current!(current_locale = nil )
-      @current = current_locale.is_a?(Spree::Currency) ? current_locale : locale(current_locale||I18n.locale).first
+      @current = current_locale.is_a?(Spree::Currency) ? current_locale : Spree::Currency.find_by_char_code(:eur)
     end
 
     def load_rate(options= {})
