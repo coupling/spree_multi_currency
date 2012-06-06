@@ -16,7 +16,7 @@ module ActionView
         unit      = options.delete(:unit)
         format    = options.delete(:format)
 
-        unit = case session[:currency_id].to_sym
+        unit = case session[:currency_id]
         when :EUR
           '&euro;'
         when :USD
