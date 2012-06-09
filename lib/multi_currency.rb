@@ -21,7 +21,7 @@ module MultiCurrency
         end
       end
 
-      define_method("base_#{number_field}") do
+      define_method("raw_#{number_field}") do
         read_attribute(number_field.to_sym)
       end
 
