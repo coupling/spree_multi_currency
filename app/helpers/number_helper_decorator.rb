@@ -7,25 +7,17 @@ module ActionView
 
         options.symbolize_keys!
         options[:locale] = "currency_#{ Spree::Currency.current.try(:char_code) || I18n.default_locale }"
-        defaults  = I18n.translate('number.format', :locale => options[:locale], :default => {})
-        currency  = I18n.translate('number.currency.format', :locale => options[:locale], :default => {})
-        defaults  = DEFAULT_CURRENCY_VALUES.merge(defaults).merge!(currency)
+        
+        number_format  = I18n.translate('number.format', :locale => options[:locale], :default => {})
+        currency_format  = I18n.translate('number.currency.format', :locale => options[:locale], :default => {})
+        
+        defaults  = DEFAULT_CURRENCY_VALUES.merge(number_format).merge(currency_format)
         defaults[:negative_format] = "-" + options[:format] if options[:format]
-        options   = defaults.merge!(options)
-
-        unit      = options.delete(:unit)
-        format    = options.delete(:format)
-
-        unit = case session[:currency_id]
-        when :EUR
-          '&euro;'
-        when :USD
-          '$'
-        when :GBP
-          '&pound;'
-        else
-          '&euro;'
-        end
+        defaults[:negative_format] = options[:negative_format] if options[:negative_format]
+         
+        options = defaults.merge(options)
+        unit   = options.delete(:unit)
+        format = options.delete(:format)
 
         if number.to_f < 0
           format = options.delete(:negative_format)
@@ -43,10 +35,7 @@ module ActionView
             e.number.to_s.html_safe? ? formatted_number.html_safe : formatted_number
           end
         end
-
       end
-
-
     end
   end
 end
