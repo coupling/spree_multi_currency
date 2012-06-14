@@ -10,25 +10,15 @@ module ActionView
         defaults  = I18n.translate('number.format', :locale => options[:locale], :default => {})
         currency  = I18n.translate('number.currency.format', :locale => options[:locale], :default => {})
         defaults  = DEFAULT_CURRENCY_VALUES.merge(defaults).merge!(currency)
-        defaults[:negative_format] = "-" + options[:format] if options[:format]
+        defaults[:negative_format] ||= "-" + options[:format] if options[:format]
         options   = defaults.merge!(options)
 
         unit      = options.delete(:unit)
         format    = options.delete(:format)
 
         if defined? session
-          unit = case session[:currency_id]
-          when :EUR
-            '&euro;'
-          when :USD
-            '$'
-          when :GBP
-            '&pound;'
-          else
-            '&euro;'
-          end
-        else
-          unit = '&euro;'
+          units = {:eur => '&euro;', :usd => '$', :gbp => '&pound;'}
+          unit = (units[session[:currency_id].to_s.downcase.to_sym] || units[:eur]).html_safe
         end
 
         if number.to_f < 0
@@ -47,10 +37,7 @@ module ActionView
             e.number.to_s.html_safe? ? formatted_number.html_safe : formatted_number
           end
         end
-
       end
-
-
     end
   end
 end
