@@ -16,7 +16,7 @@ module ActionView
         unit      = options.delete(:unit)
         format    = options.delete(:format)
 
-        if session
+        if defined? session
           unit = case session[:currency_id]
           when :EUR
             '&euro;'
