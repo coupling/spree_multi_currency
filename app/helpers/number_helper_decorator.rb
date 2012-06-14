@@ -16,15 +16,19 @@ module ActionView
         unit      = options.delete(:unit)
         format    = options.delete(:format)
 
-        unit = case session[:currency_id]
-        when :EUR
-          '&euro;'
-        when :USD
-          '$'
-        when :GBP
-          '&pound;'
+        if session
+          unit = case session[:currency_id]
+          when :EUR
+            '&euro;'
+          when :USD
+            '$'
+          when :GBP
+            '&pound;'
+          else
+            '&euro;'
+          end
         else
-          '&euro;'
+          unit = '&euro;'
         end
 
         if number.to_f < 0
