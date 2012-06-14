@@ -16,7 +16,7 @@ module ActionView
         unit      = options.delete(:unit)
         format    = options.delete(:format)
 
-        if method_defined? :session
+        if respond_to? :session
           units = {:eur => '&euro;', :usd => '$', :gbp => '&pound;'}
           unit = (units[session[:currency_id].to_s.downcase.to_sym] || units[:eur]).html_safe
         end
