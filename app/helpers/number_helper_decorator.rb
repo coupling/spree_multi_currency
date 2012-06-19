@@ -27,7 +27,7 @@ module ActionView
         end
 
         begin
-          value = number_with_precision(number, options.merge(:raise => true, :precision => 0))
+          value = number_with_precision(number, options.merge(:raise => true))
           format.gsub(/%n/, value).gsub(/%u/, unit).html_safe
         rescue InvalidNumberError => e
           if options[:raise]
