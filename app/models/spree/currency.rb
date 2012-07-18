@@ -32,7 +32,7 @@ class Spree::Currency < ActiveRecord::Base
   class << self
 
     def current(char_code = nil)
-      @current = char_code.is_a?(Spree::Currency) ? char_code : (where('char_code => ', char_code).first || where('basic = ?', true).first)
+      @current = char_code.is_a?(Spree::Currency) ? char_code : (where(:char_code => char_code).first || where(:basic => true).first)
     end
 
     def load_rate(options= {})
