@@ -31,34 +31,24 @@ class Spree::Currency < ActiveRecord::Base
 
   class << self
 
-    def current_currency(currency_code)
-      @current = Spree::Currency.find_by_char_code(currency_code)
-    end
-
-    # Get the current locale, euro if nothing is set
-    def current( current_locale = nil )
-      @current = Spree::Currency.find_by_char_code(:eur) #locale(current_locale || I18n.locale).first
-    end
-
-    def current!(current_locale = nil )
-      @current = current_locale.is_a?(Spree::Currency) ? current_locale : Spree::Currency.find_by_char_code(:eur)
+    def current(char_code = nil)
+      @current = char_code.is_a?(Spree::Currency) ? char_code : (where('char_code => ', char_code).first || where('basic = ?', true).first)
     end
 
     def load_rate(options= {})
-      @current ||= current(options[:locale] || I18n.locale)
+      @current ||= current(options[:char_code])
       basic
 
       if @rate = @current.currency_converters.get_rate(options[:date] || Time.now)
         add_rate(basic.char_code,   @current.char_code, @rate.nominal/@rate.value.to_f)
         add_rate(@current.char_code, basic.char_code,   @rate.value.to_f)
       end
-
     end
 
 		# Exchanges money between two currencies.
 		# E.g. with these args: 150, DKK, GBP returns 16.93
     def convert(value, from, to)
-      ( Money.new(value.to_f * 10000, from).exchange_to(to).to_f / 100).round(2)
+      (Money.new(value.to_f * 10000, from).exchange_to(to).to_f / 100).round(2)
     end
 
 		# Converts the basic currency value to a 'localized' value.
@@ -102,7 +92,5 @@ class Spree::Currency < ActiveRecord::Base
     def add_rate(from, to, rate)
       Money.add_rate(from, to, rate.to_f ) unless Money.default_bank.get_rate(from, to)
     end
-
   end
-
 end

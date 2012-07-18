@@ -5,8 +5,7 @@ Spree::BaseController.class_eval do
 
   def set_currency
     if session[:currency_id].present? && (@currency = Spree::Currency.find_by_char_code(session[:currency_id]))
-      Spree::Currency.current!(@currency)
+      Spree::Currency.current(@currency)
     end
   end
-
 end

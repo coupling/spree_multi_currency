@@ -6,20 +6,17 @@ module ActionView
         return nil if number.nil?
 
         options.symbolize_keys!
-        options[:locale] = "currency_#{ Spree::Currency.current.try(:char_code) || I18n.default_locale }"
-        defaults  = I18n.translate('number.format', :locale => options[:locale], :default => {})
-        currency  = I18n.translate('number.currency.format', :locale => options[:locale], :default => {})
-        defaults  = DEFAULT_CURRENCY_VALUES.merge(defaults).merge!(currency)
+        
+        options[:locale] = "currency_#{Spree::Currency.current.char_code}"
+        number_format  = I18n.translate('number.format', :locale => options[:locale], :default => {})
+        currency_format  = I18n.translate('number.currency.format', :locale => options[:locale], :default => {})
+
+        defaults  = DEFAULT_CURRENCY_VALUES.merge(number_format).merge!(currency_format)
         defaults[:negative_format] ||= "-" + options[:format] if options[:format]
-        options   = defaults.merge!(options)
+        options = defaults.merge!(options)
 
-        unit      = options.delete(:unit)
-        format    = options.delete(:format)
-
-        if (session rescue nil)
-          units = {:eur => '&euro;', :usd => '$', :gbp => '&pound;'}
-          unit = (units[session[:currency_id].to_s.downcase.to_sym] || units[:eur]).html_safe
-        end
+        unit = options.delete(:unit)
+        format = options.delete(:format)
 
         if number.to_f < 0
           format = options.delete(:negative_format)
