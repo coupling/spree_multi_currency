@@ -3,6 +3,6 @@ Spree::LineItem.class_eval do
   multi_currency :price
 
   def raw_amount
-    raw_price * quantity
+    read_attribute(:price) * quantity
   end
 end

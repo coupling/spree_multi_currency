@@ -42,7 +42,7 @@ class Spree::Currency < ActiveRecord::Base
 
       if @rate = @current.currency_converters.get_rate(options[:date] || Time.now)
         add_rate(@basic.char_code,   @current.char_code, @rate.value.to_f)
-        add_rate(@current.char_code, basic.char_code,   @rate.nominal/@rate.value.to_f)
+        add_rate(@current.char_code, @basic.char_code,   @rate.nominal/@rate.value.to_f)
       end
     end
 
@@ -57,7 +57,7 @@ class Spree::Currency < ActiveRecord::Base
 		# Usage: Spree::Currency.conversion_to_current(100, :locale => "da")
     def conversion_to_current(value, options = { })
       load_rate(options)
-      convert(value, basic.char_code, current.char_code)
+      convert(value, @basic.char_code, @current.char_code)
     rescue => ex
       Rails.logger.error " [ Currency ] :#{ex.inspect}"
       value
@@ -70,9 +70,9 @@ class Spree::Currency < ActiveRecord::Base
       load_rate(options)
 
       # Replace commas with dots as decimal mark for those languages that use this.
-      value = value.gsub(",",".")
+      value = value.to_s.gsub(",",".")
 
-      convert(value, current.char_code, basic.char_code)
+      convert(value, @current.char_code, @basic.char_code)
     rescue => ex
       Rails.logger.error " [ Currency ] :#{ex.inspect}"
       value
