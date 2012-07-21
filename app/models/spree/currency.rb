@@ -37,7 +37,7 @@ class Spree::Currency < ActiveRecord::Base
     end
 
     def load_rate(options= {})
-      @current ||= current(options[:char_code])
+      current(options[:char_code])
       basic
 
       if @rate = @current.currency_converters.get_rate(options[:date] || Time.now)
